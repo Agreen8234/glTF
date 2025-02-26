@@ -1,0 +1,37 @@
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+
+<script>
+    let scene = new THREE.Scene();
+    let camera = new THREE.PerspectiveCamera(75, 600 / 400, 0.1, 1000);
+    let renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('modelCanvas'), alpha: true });
+    renderer.setSize(600, 400);
+
+    let light = new THREE.AmbientLight(0xffffff, 1);
+    scene.add(light);
+
+    let loader = new THREE.GLTFLoader();
+    let bodyModel;
+
+    loader.load('model.glb', function (gltf) {
+        bodyModel = gltf.scene;
+        bodyModel.scale.set(1, 1, 1);
+        scene.add(bodyModel);
+    }, undefined, function (error) {
+        console.error('Error loading 3D model:', error);
+    });
+
+    camera.position.z = 2;
+
+    function animate() {
+        requestAnimationFrame(animate);
+        if (bodyModel) bodyModel.rotation.y += 0.01;
+        renderer.render(scene, camera);
+    }
+    animate();
+
+    function updateModel() {
+        let weight = document.getElementById('weight').value;
+        let scaleFactor = 1 + (weight - 70) / 100;
+        if (bodyModel) bodyModel.scale.set(scaleFactor, scaleFactor, scaleFactor);
+    }
+</script>
